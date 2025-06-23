@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CDR File Processor</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --success: #27ae60;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: var(--primary);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .logo i {
+            font-size: 2.5rem;
+            color: var(--secondary);
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 5px;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.8;
+            margin-bottom: 15px;
+        }
+        
+        .upload-section {
+            padding: 30px;
+            background: var(--light);
+            border-bottom: 1px solid #ddd;
+            text-align: center;
+        }
+        
+        .file-upload {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 30px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .upload-icon {
+            font-size: 4rem;
+            color: var(--secondary);
+        }
+        
+        .upload-text {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .upload-btn {
+            background: var(--secondary);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .upload-btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .file-name {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #777;
+        }
+        
+        .file-type {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+            justify-content: center;
+        }
+        
+        .file-type-btn {
+            padding: 8px 15px;
+            background: #f1f1f1;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .file-type-btn.active {
+            background: var(--secondary);
+            color: white;
+            border-color: var(--secondary);
+        }
+        
+        .table-section {
+            padding: 20px;
+            display: none;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #eee;
+        }
+        
+        .pagination-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .rows-per-page {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: white;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: var(--secondary);
+            color: white;
+        }
+        
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+        
+        .btn-warning {
+            background: #f39c12;
+            color: white;
+        }
+        
+        .btn-danger {
+            background: var(--accent);
+            color: white;
+        }
+        
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            max-height: 500px;
+            overflow-y: auto;
+            position: relative;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            min-width: 1200px;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        th {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        tr:hover {
+            background-color: #e9f7fe;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+        
+        .page-btn {
+            padding: 8px 15px;
+            background: #f1f1f1;
+            border: 1px solid #ddd;
+            cursor: pointer;
+            border-radius: 4px;
+            min-width: 40px;
+            text-align: center;
+        }
+        
+        .page-btn.active {
+            background: var(--secondary);
+            color: white;
+            border-color: var(--secondary);
+        }
+        
+        .page-nav {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .instructions {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .instructions h2 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .steps {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .step {
+            flex: 1;
+            min-width: 200px;
+            padding: 20px;
+            background: var(--light);
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .step i {
+            font-size: 2.5rem;
+            color: var(--secondary);
+            margin-bottom: 15px;
+        }
+        
+        .step h3 {
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: var(--primary);
+            color: white;
+            margin-top: 30px;
+        }
+        
+        .status-bar {
+            padding: 10px;
+            text-align: center;
+            background: #f1c40f;
+            color: var(--primary);
+            font-weight: 500;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .column-count {
+            background: var(--secondary);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        
+        .action-bar {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+        
+        .info-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 800px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .info-card h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .highlight {
+            background-color: #fff9c4;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-weight: 600;
+        }
+        
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+            }
+            
+            .pagination-controls {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .file-type {
+                flex-direction: column;
+            }
+            
+            th, td {
+                padding: 8px 10px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-file-csv"></i>
+                <div>
+                    <h1>CDR File Processor</h1>
+                    <div class="subtitle">Advanced Call Detail Records Management</div>
+                </div>
+            </div>
+        </header>
+        
+        <section class="upload-section">
+            <div class="file-upload">
+                <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                <div class="upload-text">Upload your CDR or Text file</div>
+                <input type="file" id="fileInput" class="file-input" accept=".txt,.csv">
+                <label for="fileInput" class="upload-btn">
+                    <i class="fas fa-file-upload"></i> Choose File
+                </label>
+                <div class="file-name" id="fileName">No file selected</div>
+                
+                <div class="file-type">
+                    <div class="file-type-btn active" id="cdrBtn">CDR (with headers)</div>
+                    <div class="file-type-btn" id="textBtn">Text (no headers)</div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="info-card">
+            <h3>About This CDR Processor</h3>
+            <p>This tool is designed for telecom professionals to analyze call detail records with:</p>
+            <ul style="margin: 15px 0; padding-left: 20px;">
+                <li>Advanced pagination controls with row selection</li>
+                <li>Navigation buttons for efficient data browsing</li>
+                <li>Automatic header application for raw text files</li>
+                <li>CSV export functionality</li>
+                <li>Responsive design for all devices</li>
+            </ul>
+            <p>Upload your CDR files to analyze call patterns, durations, and network performance metrics.</p>
+        </section>
+        
+        <section class="table-section" id="tableSection">
+            <div class="status-bar" id="statusBar">
+                <i class="fas fa-info-circle"></i> 
+                <span id="statusText">CDR data loaded successfully</span>
+                <span class="column-count" id="columnCount">0 columns</span>
+            </div>
+            
+            <div class="controls">
+                <div class="pagination-controls">
+                    <div class="rows-per-page">
+                        <span>Rows per page:</span>
+                        <select id="rowsPerPage">
+                            <option value="10">10</option>
+                            <option value="30" selected>30</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                    </div>
+                    
+                    <div class="page-nav">
+                        <button class="btn btn-primary" id="firstPage">
+                            <i class="fas fa-angle-double-left"></i>
+                        </button>
+                        <button class="btn btn-primary" id="prevPage">
+                            <i class="fas fa-angle-left"></i>
+                        </button>
+                        <span id="pageInfo">Page 1 of 1</span>
+                        <button class="btn btn-primary" id="nextPage">
+                            <i class="fas fa-angle-right"></i>
+                        </button>
+                        <button class="btn btn-primary" id="lastPage">
+                            <i class="fas fa-angle-double-right"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="action-bar">
+                    <button class="btn btn-success" id="downloadBtn">
+                        <i class="fas fa-download"></i> Download CSV
+                    </button>
+                    <button class="btn btn-danger" id="resetBtn">
+                        <i class="fas fa-redo"></i> Reset
+                    </button>
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <table id="cdrTable">
+                    <thead>
+                        <tr>
+                            <!-- Table headers will be generated here -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Table rows will be generated here -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="pagination" id="pagination">
+                <!-- Pagination buttons will be generated here -->
+            </div>
+        </section>
+        
+        <footer>
+            <p>CDR File Processor &copy; 2023 | Telecom Analytics Solution</p>
+        </footer>
+    </div>
+
+    <script>
+        // Standard CDR headers
+        const cdrHeaders = [
+            "Accounting Status", "NAS IP Address", "NAS Port", "Accounting Session ID", 
+            "Ingress Session ID", "Egress Session ID", "Session Protocol Type", 
+            "Session-Forked-Call-Id", "Generic ID", "Calling Station ID", 
+            "Called Station ID", "Accounting Termination Cause<br>Is this Cause Code?", 
+            "Accounting Session Time", "Cisco Setup Time", "Cisco Connect Time", 
+            "Cisco Disconnect Time", "Cisco Disconnect Cause", 
+            "Egress Network Interface ID", "Egress Vlan Tag Value", 
+            "Ingress Network Interface ID", "Ingress Vlan Tag Value", 
+            "Egress Realm", "Ingress Realm", "Flow Identifier", 
+            "Flow Type<br>Is this Codec?", "Flow Input Realm", "Flow Input Src Addr", 
+            "Flow Input Src Port", "Flow Input Dest Address", "Flow Input Dest Port", 
+            "Flow Output Realm", "Flow Output Src Address", "Flow Output Src Port", 
+            "Flow Output Dest Addr", "Flow Output Dest Port", 
+            "RTCP Calling Packets Lost", "RTCP Calling Avg Jitter (msec)", 
+            "RTCP Calling Avg Latency (msec)", "RTCP Calling Max Jitter (msec)", 
+            "RTCP Calling Max Latency (msec)", "RTP Calling Packets Lost", 
+            "RTP Calling Avg Jitter (msec)", "RTP Calling Max Jitter (msec)", 
+            "RTP Calling Octets", "RTP Calling Packets", "Calling R-Factor", 
+            "Calling MOS", "Flow Identifier", "Flow Type", "Flow Input Realm", 
+            "Flow Input Src Addr", "Flow Input Src Port", "Flow Input Dest Address", 
+            "Flow Input Dest Port", "Flow Output Realm", "Flow Output Src Address", 
+            "Flow Output Src Port", "Flow Output Dest Addr", "Flow Output Dest Port", 
+            "RTCP Called Packets Lost", "RTCP Called Avg Jitter (msec)", 
+            "RTCP Called Avg Latency (msec)", "RTCP Called Max Jitter (msec)", 
+            "RTCP Called Max Latency (msec)", "RTP Called Packets Lost", 
+            "RTP Called Avg Jitter (msec)", "RTP Called Max Jitter (msec)", 
+            "RTP Called Octets", "RTP Called Packets", "Called R-Factor", 
+            "Called MOS", "Flow Identifier", "Flow Type", "Flow Input Realm", 
+            "Flow Input Src Addr", "Flow Input Src Port", "Flow Input Dest Address", 
+            "Flow Input Dest Port", "Flow Output Realm", "Flow Output Src Address", 
+            "Flow Output Src Port", "Flow Output Dest Addr", "Flow Output Dest Port", 
+            "RTCP Calling Packets Lost", "RTCP Calling Avg Jitter (msec)", 
+            "RTCP Calling Avg Latency (msec)", "RTCP Calling Max Jitter (msec)", 
+            "RTCP Calling Max Latency (msec)", "RTP Calling Packets Lost", 
+            "RTP Calling Avg Jitter (msec)", "RTP Calling Max Jitter (msec)", 
+            "RTP Calling Octets", "RTP Calling Packets", "Flow Identifier", 
+            "Flow Type", "Flow Input Realm", "Flow Input Src Addr", 
+            "Flow Input Src Port", "Flow Input Dest Address", "Flow Input Dest Port", 
+            "Flow Output Realm", "Flow Output Src Address", "Flow Output Src Port", 
+            "Flow Output Dest Addr", "Flow Output Dest Port", 
+            "RTCP Called Packets Lost", "RTCP Called Avg Jitter (msec)", 
+            "RTCP Called Avg Latency (msec)", "RTCP Called Max Jitter (msec)", 
+            "RTCP Called Max Latency (msec)", "RTP Called Packets Lost", 
+            "RTP Called Avg Jitter (msec)", "RTP Called Max Jitter (msec)", 
+            "RTP Called Octets", "RTP Called Packets", "Charging Vector ICID", 
+            "Charging Function Address", "Firmware Version", "Local timezone", 
+            "Post Dial Delay (msec)", "Primary routing Number", 
+            "Originating Trunk Group", "Terminating Trunk Group", 
+            "Originating Trunk Context", "Terminating Trunk Context", "P Asserted ID", 
+            "Ingress Local Address", "Ingress Remote Address", 
+            "Egress Local Address", "Egress Remote Address", "SIP DIVERSION", 
+            "Session Disposition", "Disconnect Initiator", "Disconnect Cause", 
+            "Sip Status Code", "Egress Routing Number", "Ingress RPH", "Egress RPH", 
+            "refer call transfer ID","Custom VSA 200","Custom VSA 201",
+            "Custom VSA 202","Custom VSA 203","Custom VSA 204","Custom VSA 205",
+            "Custom VSA 206","Custom VSA 207","Custom VSA 208","Custom VSA 209",
+            "Custom VSA 210","Custom VSA 211","Custom VSA 212",
+            "Custom VSA 213","Custom VSA 214","Custom VSA 215",
+            "Custom VSA 216","Custom VSA 217","Custom VSA 218",
+            "Custom VSA 219","Custom VSA 220","Custom VSA 221",
+            "Custom VSA 222","Custom VSA 223","Custom VSA 224",
+            "Custom VSA 225","Custom VSA 226","Custom VSA 227",
+            "Custom VSA 228","Custom VSA 229","Custom VSA 230",
+            "Calling-Media-Stop-Time"," Called-Media-Stop-Time",
+            "Calling-Media-Stop-Time","Called-Media-Stop-Time",
+            "Flow Media Type","Flow Media Type","Flow Media Type",
+            "Flow Media Type","RTP Calling Octets Transmitted","RTP Calling Packets Transmitted",
+            "RTP Called Octets Transmitted","RTP Called Packets Transmitted","RTP Calling Octets Transmitted","RTP Calling Packets Transmitted","RTP Calling Octets Transmitted",
+            "RTP Calling Packets Transmitted","MSRP Called Octets","MSRP Called Packets","MSRP Called Octets Transmitted","MSRP Called Packets Transmitted","MSRP Calling Octets",
+            "MSRP Calling Packets","MSRP Calling Octets Transmitted","MSRP Calling Packets Transmitted","PGW-IP Address","SGW-IP Address","ORIG-IOI","TERM-IOI",
+            "IMEI","Node Functionality","History Info","P-Visited Network ID","IMSI","Access-Network-Information","CDR Sequence Number","Stir-Signed-Request","Stir-Signed-Request-Exception-Id",
+            "Stir-Verified-Request","Stir-Verified-Request-Exception-Id","Stir-VS-Verstat","Stir-VS-Reason","Stir-TN-Used-For-AS-VS-Request","Stir-Div-Signed-Request","Stir-Div-Verified-Request",
+            "History Info2","Stir-VS-Invite-State"
+
+        ];
+        
+        // Sample CDR data
+        const sampleCdrData = [
+            "2,220.158.136.74,5060,4b27d8d5-276aad8c2929-7f662328de50-4efac80a-0500047,4b27d8d5-276aad8c2929-7f662328de50-4efac80a-0500047,4b27d8d5-276aad8c2929-7f662328de50-4efac80a-0500047,SIP,,,<sip:00911246047119@220.158.136.74:5060>;tag=6911581b-276aad8c6c85-7f66267a9aa0-4efac80a-0500047,<sip:09839802385@220.158.136.74:5060>,1,41,10:59:08.050 IST Dec 07 2024,10:59:35.273 IST Dec 07 2024,11:00:16.938 IST Dec 07 2024,1,s1p1,366,s0p0,0,TTSL_Gurgaon,Access_Noida,localhost:632299,G729,Access_Noida,10.200.250.78,40870,220.158.136.74,13424,TTSL_Gurgaon,10.55.89.206,34372,10.60.66.45,17908,0,0,0,0,0,1,2,45,248640,3360,8154,408,localhost:632300,G729,TTSL_Gurgaon,10.60.66.45,17908,10.55.89.206,34372,Access_Noida,220.158.136.74,13424,10.200.250.78,40870,1,19,0,27,0,0,0,1,265200,3400,8162,408,,,,0.0.0.0,0,0.0.0.0,0,,0.0.0.0,0,0.0.0.0,0,0,0,0,0,0,0,0,0,0,0,,,,0.0.0.0,0,0.0.0.0,0,,0.0.0.0,0,0.0.0.0,0,0,0,0,0,0,0,0,0,0,0,,,SCZ9.3.0 Patch 1 (Build 74),GMT-05:30,794,sip:09839802385@220.158.136.74:5060,,,,,220.158.136.74:5060,10.200.250.78:5060,10.55.89.206:5060,10.60.65.31:5060,,3,2,16,0,sip:09839802385@10.60.65.31:5060,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,11:00:16.938 IST Dec 07 2024,11:00:16.938 IST Dec 07 2024,00:00:00.000 UTC Jan 01 1970,00:00:00.000 UTC Jan 01 1970,audio,audio,,,56304284,594661,116772239,1140188,0,0,0,0,0,0,0,0,0,0,0,0,0.0.0.0,0.0.0.0,,,1,,,,911246047119,,2267007"
+        ];
+        
+        let currentData = [];
+        let rowsPerPage = 30;
+        let currentPage = 1;
+        let totalPages = 1;
+        let fileType = 'cdr'; // 'cdr' or 'text'
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const fileInput = document.getElementById('fileInput');
+            const fileName = document.getElementById('fileName');
+            const tableSection = document.getElementById('tableSection');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const cdrBtn = document.getElementById('cdrBtn');
+            const textBtn = document.getElementById('textBtn');
+            const cdrTable = document.getElementById('cdrTable');
+            const statusBar = document.getElementById('statusBar');
+            const statusText = document.getElementById('statusText');
+            const columnCount = document.getElementById('columnCount');
+            const rowsPerPageSelect = document.getElementById('rowsPerPage');
+            const firstPageBtn = document.getElementById('firstPage');
+            const prevPageBtn = document.getElementById('prevPage');
+            const nextPageBtn = document.getElementById('nextPage');
+            const lastPageBtn = document.getElementById('lastPage');
+            const pageInfo = document.getElementById('pageInfo');
+            
+            // Initialize with sample data
+            processCdrData(sampleCdrData.join('\n'));
+            displayTable();
+            updateStatusBar();
+            updatePageInfo();
+            
+            // Event listeners
+            fileInput.addEventListener('change', handleFileUpload);
+            cdrBtn.addEventListener('click', () => setFileType('cdr'));
+            textBtn.addEventListener('click', () => setFileType('text'));
+            downloadBtn.addEventListener('click', downloadCSV);
+            resetBtn.addEventListener('click', resetApp);
+            rowsPerPageSelect.addEventListener('change', changeRowsPerPage);
+            firstPageBtn.addEventListener('click', goToFirstPage);
+            prevPageBtn.addEventListener('click', goToPrevPage);
+            nextPageBtn.addEventListener('click', goToNextPage);
+            lastPageBtn.addEventListener('click', goToLastPage);
+            
+            function setFileType(type) {
+                fileType = type;
+                cdrBtn.classList.toggle('active', type === 'cdr');
+                textBtn.classList.toggle('active', type === 'text');
+            }
+            
+            function handleFileUpload(e) {
+                if (e.target.files.length > 0) {
+                    const file = e.target.files[0];
+                    fileName.textContent = file.name;
+                    
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const content = e.target.result;
+                        processFileContent(content);
+                    };
+                    
+                    reader.readAsText(file);
+                }
+            }
+            
+            function processFileContent(content) {
+                try {
+                    if (fileType === 'cdr') {
+                        processCdrData(content);
+                        statusText.textContent = "CDR file processed successfully";
+                    } else {
+                        processTextData(content);
+                        statusText.textContent = "Text file processed with CDR headers";
+                    }
+                    
+                    displayTable();
+                    updateStatusBar();
+                    updatePageInfo();
+                    tableSection.style.display = 'block';
+                    statusBar.style.display = 'flex';
+                    statusBar.style.backgroundColor = '#f1c40f';
+                    statusBar.style.color = '#2c3e50';
+                    
+                    // Scroll to table section
+                    setTimeout(() => {
+                        tableSection.scrollIntoView({ behavior: 'smooth' });
+                    }, 300);
+                } catch (error) {
+                    console.error('Error processing file:', error);
+                    statusText.textContent = "Error processing file: " + error.message;
+                    statusBar.style.backgroundColor = '#e74c3c';
+                    statusBar.style.color = 'white';
+                    statusBar.style.display = 'flex';
+                }
+            }
+            
+            function processCdrData(content) {
+                const rows = content.split('\n').filter(line => line.trim() !== '');
+                currentData = rows.map(row => row.split(',').map(cell => cell.trim()));
+            }
+            
+            function processTextData(content) {
+                const rows = content.split('\n').filter(line => line.trim() !== '');
+                const dataRows = rows.map(row => row.split(',').map(cell => cell.trim()));
+                
+                // Apply CDR headers to the text data
+                currentData = [cdrHeaders, ...dataRows];
+            }
+            
+            function displayTable() {
+                const thead = cdrTable.querySelector('thead tr');
+                const tbody = cdrTable.querySelector('tbody');
+                const pagination = document.getElementById('pagination');
+                
+                // Clear existing content
+                thead.innerHTML = '';
+                tbody.innerHTML = '';
+                pagination.innerHTML = '';
+                
+                // Create headers
+                if (currentData.length > 0) {
+                    // Original headers
+                    currentData[0].forEach(header => {
+                        const th = document.createElement('th');
+                        th.textContent = header;
+                        th.title = header;
+                        thead.appendChild(th);
+                    });
+                    
+                    // Calculate total pages
+                    totalPages = Math.ceil((currentData.length - 1) / rowsPerPage);
+                    
+                    // Create pagination buttons
+                    if (totalPages > 1) {
+                        const startPage = Math.max(1, currentPage - 2);
+                        const endPage = Math.min(totalPages, startPage + 4);
+                        
+                        for (let i = startPage; i <= endPage; i++) {
+                            const button = document.createElement('button');
+                            button.className = `page-btn ${i === currentPage ? 'active' : ''}`;
+                            button.textContent = i;
+                            button.addEventListener('click', () => {
+                                currentPage = i;
+                                displayTable();
+                                updatePageInfo();
+                            });
+                            pagination.appendChild(button);
+                        }
+                    }
+                    
+                    // Create rows for current page
+                    const startIndex = (currentPage - 1) * rowsPerPage + 1;
+                    const endIndex = Math.min(startIndex + rowsPerPage, currentData.length);
+                    
+                    for (let i = startIndex; i < endIndex; i++) {
+                        const row = document.createElement('tr');
+                        
+                        // Original data cells
+                        currentData[i].forEach(cell => {
+                            const td = document.createElement('td');
+                            td.textContent = cell;
+                            td.title = cell;
+                            row.appendChild(td);
+                        });
+                        
+                        tbody.appendChild(row);
+                    }
+                }
+                
+                updatePageButtons();
+            }
+            
+            function changeRowsPerPage() {
+                rowsPerPage = parseInt(rowsPerPageSelect.value);
+                currentPage = 1;
+                displayTable();
+                updateStatusBar();
+                updatePageInfo();
+            }
+            
+            function goToFirstPage() {
+                currentPage = 1;
+                displayTable();
+                updatePageInfo();
+            }
+            
+            function goToPrevPage() {
+                if (currentPage > 1) {
+                    currentPage--;
+                    displayTable();
+                    updatePageInfo();
+                }
+            }
+            
+            function goToNextPage() {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    displayTable();
+                    updatePageInfo();
+                }
+            }
+            
+            function goToLastPage() {
+                currentPage = totalPages;
+                displayTable();
+                updatePageInfo();
+            }
+            
+            function updatePageButtons() {
+                firstPageBtn.disabled = currentPage === 1;
+                prevPageBtn.disabled = currentPage === 1;
+                nextPageBtn.disabled = currentPage === totalPages;
+                lastPageBtn.disabled = currentPage === totalPages;
+            }
+            
+            function updatePageInfo() {
+                pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+                updatePageButtons();
+            }
+            
+            function updateStatusBar() {
+                if (currentData.length > 0) {
+                    const colCount = currentData[0].length;
+                    const rowCount = currentData.length - 1;
+                    columnCount.textContent = `${rowCount} records, ${colCount} columns`;
+                    statusBar.style.display = 'flex';
+                }
+            }
+            
+            function downloadCSV() {
+                // Create CSV content
+                let csvContent = '';
+                
+                // Headers
+                csvContent += currentData[0].join(',') + '\n';
+                
+                // Data rows
+                for (let i = 1; i < currentData.length; i++) {
+                    csvContent += currentData[i].map(cell => {
+                        // Escape cells that contain commas
+                        if (typeof cell === 'string' && cell.includes(',')) {
+                            return `"${cell}"`;
+                        }
+                        return cell;
+                    }).join(',') + '\n';
+                }
+                
+                // Create and trigger download
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.setAttribute('href', url);
+                link.setAttribute('download', 'cdr_data_export.csv');
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+            
+            function resetApp() {
+                currentData = [];
+                currentPage = 1;
+                rowsPerPage = 30;
+                rowsPerPageSelect.value = '30';
+                fileInput.value = '';
+                fileName.textContent = 'No file selected';
+                tableSection.style.display = 'none';
+                statusBar.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
