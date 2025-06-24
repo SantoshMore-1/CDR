@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CDR File Processor</title>
+    <title>Advanced CDR File Processor</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -13,6 +13,8 @@
             --light: #ecf0f1;
             --dark: #2c3e50;
             --success: #27ae60;
+            --telecom-blue: #005eb8;
+            --telecom-purple: #6a0dad;
         }
         
         * {
@@ -23,54 +25,62 @@
         }
         
         body {
-            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+            background: linear-gradient(135deg, var(--telecom-blue), var(--telecom-purple));
             color: #333;
             min-height: 100vh;
             padding: 20px;
         }
         
         .container {
-            max-width: 1400px;
+            max-width: 1800px;
             margin: 0 auto;
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.97);
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
             overflow: hidden;
         }
         
         header {
-            background: var(--primary);
+            background: linear-gradient(to right, var(--telecom-blue), var(--primary));
             color: white;
-            padding: 20px;
+            padding: 25px;
             text-align: center;
             position: relative;
+            border-bottom: 5px solid var(--secondary);
         }
         
         .logo {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 15px;
+            gap: 20px;
+            margin-bottom: 10px;
         }
         
         .logo i {
-            font-size: 2.5rem;
-            color: var(--secondary);
+            font-size: 3rem;
+            color: white;
+            background: var(--secondary);
+            border-radius: 50%;
+            padding: 15px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
         }
         
         h1 {
-            font-size: 2.2rem;
+            font-size: 2.5rem;
             margin-bottom: 5px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
         }
         
         .subtitle {
-            font-size: 1.1rem;
-            opacity: 0.8;
+            font-size: 1.2rem;
+            opacity: 0.9;
             margin-bottom: 15px;
+            font-weight: 300;
         }
         
         .upload-section {
-            padding: 30px;
+            padding: 40px;
             background: var(--light);
             border-bottom: 1px solid #ddd;
             text-align: center;
@@ -80,23 +90,26 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 20px;
-            max-width: 600px;
+            gap: 25px;
+            max-width: 700px;
             margin: 0 auto;
-            padding: 30px;
+            padding: 40px;
             background: white;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border: 2px dashed var(--secondary);
         }
         
         .upload-icon {
-            font-size: 4rem;
-            color: var(--secondary);
+            font-size: 5rem;
+            color: var(--telecom-blue);
         }
         
         .upload-text {
-            font-size: 1.2rem;
+            font-size: 1.4rem;
             margin-bottom: 15px;
+            color: var(--primary);
+            font-weight: 500;
         }
         
         .file-input {
@@ -104,103 +117,121 @@
         }
         
         .upload-btn {
-            background: var(--secondary);
+            background: linear-gradient(to right, var(--telecom-blue), var(--telecom-purple));
             color: white;
-            padding: 12px 30px;
+            padding: 15px 40px;
             border: none;
             border-radius: 50px;
-            font-size: 1.1rem;
+            font-size: 1.3rem;
             cursor: pointer;
             transition: all 0.3s;
             display: flex;
             align-items: center;
-            gap: 10px;
-        }
-        
-        .upload-btn:hover {
-            background: #2980b9;
-            transform: translateY(-2px);
+            gap: 12px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
         
+        .upload-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            background: linear-gradient(to right, #004a99, #5d0b9d);
+        }
+        
         .file-name {
-            margin-top: 10px;
-            font-size: 0.9rem;
-            color: #777;
+            margin-top: 15px;
+            font-size: 1.1rem;
+            color: #555;
+            font-weight: 500;
+            text-align: center;
+            max-width: 100%;
+            word-wrap: break-word;
         }
         
         .file-type {
             display: flex;
-            gap: 15px;
-            margin-top: 15px;
+            gap: 20px;
+            margin-top: 20px;
             justify-content: center;
+            flex-wrap: wrap;
         }
         
         .file-type-btn {
-            padding: 8px 15px;
+            padding: 12px 25px;
             background: #f1f1f1;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
             cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
         }
         
         .file-type-btn.active {
-            background: var(--secondary);
+            background: var(--telecom-blue);
             color: white;
-            border-color: var(--secondary);
+            border-color: var(--telecom-blue);
+            transform: translateY(-3px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
         
         .table-section {
-            padding: 20px;
+            padding: 30px;
             display: none;
         }
         
         .controls {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 20px;
             background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid #eee;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #ddd;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
         
         .pagination-controls {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 20px;
             flex-wrap: wrap;
         }
         
         .rows-per-page {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 15px;
+            font-size: 1.1rem;
+            font-weight: 500;
         }
         
         select {
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            padding: 10px 15px;
+            border: 2px solid var(--telecom-blue);
+            border-radius: 8px;
             background: white;
+            font-size: 1rem;
+            font-weight: 500;
+            min-width: 80px;
         }
         
         .btn {
-            padding: 10px 20px;
+            padding: 12px 25px;
             border: none;
-            border-radius: 4px;
+            border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            font-size: 1.1rem;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
         }
         
         .btn-primary {
-            background: var(--secondary);
+            background: var(--telecom-blue);
             color: white;
         }
         
@@ -220,188 +251,321 @@
         }
         
         .btn:hover {
-            opacity: 0.9;
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
         
         .btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
             transform: none;
+            box-shadow: none;
         }
         
         .table-container {
             overflow-x: auto;
             border: 1px solid #eee;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            max-height: 500px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            max-height: 600px;
             overflow-y: auto;
             position: relative;
+            background: white;
+            border: 2px solid var(--telecom-blue);
         }
         
         table {
             width: 100%;
             border-collapse: collapse;
             background: white;
-            min-width: 1200px;
+            min-width: 2400px;
         }
         
         th, td {
-            padding: 12px 15px;
+            padding: 14px 18px;
             text-align: left;
             border-bottom: 1px solid #eee;
             max-width: 300px;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+            font-size: 0.95rem;
         }
         
         th {
-            background: var(--primary);
+            background: linear-gradient(to bottom, var(--telecom-blue), var(--primary));
             color: white;
             font-weight: 600;
             position: sticky;
             top: 0;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            border-right: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        th:last-child {
+            border-right: none;
         }
         
         tr:nth-child(even) {
-            background-color: #f8f9fa;
+            background-color: #f8fafc;
         }
         
         tr:hover {
-            background-color: #e9f7fe;
+            background-color: #e3f2fd;
         }
         
         .pagination {
             display: flex;
             justify-content: center;
-            margin-top: 20px;
-            gap: 5px;
+            margin-top: 30px;
+            gap: 8px;
             flex-wrap: wrap;
         }
         
         .page-btn {
-            padding: 8px 15px;
-            background: #f1f1f1;
-            border: 1px solid #ddd;
+            padding: 10px 18px;
+            background: white;
+            border: 2px solid var(--telecom-blue);
             cursor: pointer;
-            border-radius: 4px;
-            min-width: 40px;
+            border-radius: 8px;
+            min-width: 45px;
             text-align: center;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        
+        .page-btn:hover {
+            background: var(--telecom-blue);
+            color: white;
         }
         
         .page-btn.active {
-            background: var(--secondary);
+            background: var(--telecom-blue);
             color: white;
-            border-color: var(--secondary);
+            border-color: var(--telecom-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
         }
         
         .page-nav {
             display: flex;
-            gap: 10px;
+            gap: 15px;
             align-items: center;
         }
         
         .instructions {
-            max-width: 800px;
-            margin: 30px auto;
-            padding: 20px;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 30px;
             background: white;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border: 1px solid var(--telecom-blue);
         }
         
         .instructions h2 {
-            color: var(--primary);
-            margin-bottom: 15px;
+            color: var(--telecom-blue);
+            margin-bottom: 20px;
             text-align: center;
+            font-size: 1.8rem;
+            border-bottom: 2px solid var(--telecom-blue);
+            padding-bottom: 15px;
         }
         
         .steps {
             display: flex;
             flex-wrap: wrap;
-            gap: 20px;
-            margin-top: 20px;
+            gap: 25px;
+            margin-top: 25px;
         }
         
         .step {
             flex: 1;
-            min-width: 200px;
-            padding: 20px;
-            background: var(--light);
-            border-radius: 8px;
+            min-width: 250px;
+            padding: 25px;
+            background: linear-gradient(to bottom right, #f0f9ff, #e0f2fe);
+            border-radius: 12px;
             text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border: 1px solid #bbdefb;
         }
         
         .step i {
-            font-size: 2.5rem;
-            color: var(--secondary);
-            margin-bottom: 15px;
+            font-size: 3rem;
+            color: var(--telecom-blue);
+            margin-bottom: 20px;
+            background: white;
+            border-radius: 50%;
+            padding: 20px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
         }
         
         .step h3 {
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             color: var(--primary);
+            font-size: 1.4rem;
+        }
+        
+        .step p {
+            font-size: 1.1rem;
+            color: #444;
+            line-height: 1.6;
         }
         
         footer {
             text-align: center;
-            padding: 20px;
-            background: var(--primary);
+            padding: 30px;
+            background: linear-gradient(to right, var(--primary), var(--telecom-blue));
             color: white;
             margin-top: 30px;
+            font-size: 1.1rem;
         }
         
         .status-bar {
-            padding: 10px;
+            padding: 15px;
             text-align: center;
-            background: #f1c40f;
-            color: var(--primary);
-            font-weight: 500;
-            border-radius: 4px;
-            margin-bottom: 15px;
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            color: white;
+            font-weight: 600;
+            border-radius: 10px;
+            margin-bottom: 25px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 15px;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
         
         .column-count {
-            background: var(--secondary);
-            color: white;
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-size: 0.9rem;
+            background: white;
+            color: var(--telecom-blue);
+            padding: 5px 15px;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: bold;
         }
         
         .action-bar {
             display: flex;
-            gap: 10px;
+            gap: 15px;
             justify-content: center;
-            margin-top: 15px;
+            margin-top: 20px;
         }
         
         .info-card {
-            background: white;
-            border-radius: 8px;
-            padding: 20px;
-            margin: 20px auto;
-            max-width: 800px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            background: linear-gradient(to bottom, #ffffff, #f5f9ff);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px auto;
+            max-width: 900px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border: 1px solid #bbdefb;
         }
         
         .info-card h3 {
-            color: var(--primary);
-            margin-bottom: 15px;
+            color: var(--telecom-blue);
+            margin-bottom: 20px;
             text-align: center;
+            font-size: 1.7rem;
+            border-bottom: 2px solid var(--telecom-blue);
+            padding-bottom: 15px;
+        }
+        
+        .info-card p {
+            font-size: 1.15rem;
+            color: #333;
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+        
+        .info-card ul {
+            margin: 25px 0;
+            padding-left: 30px;
+        }
+        
+        .info-card li {
+            font-size: 1.15rem;
+            color: #333;
+            line-height: 1.8;
+            margin-bottom: 10px;
         }
         
         .highlight {
-            background-color: #fff9c4;
-            padding: 2px 5px;
-            border-radius: 3px;
+            background-color: #e3f2fd;
+            padding: 3px 8px;
+            border-radius: 5px;
             font-weight: 600;
+            color: var(--telecom-blue);
+        }
+        
+        .telecom-badge {
+            display: inline-block;
+            background: var(--telecom-blue);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+        
+        .file-list {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: left;
+        }
+        
+        .file-list-item {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .file-list-item:last-child {
+            border-bottom: none;
+        }
+        
+        .file-list-item i {
+            margin-right: 10px;
+            color: var(--telecom-blue);
+        }
+        
+        .file-count-badge {
+            background: var(--telecom-purple);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            margin-left: 10px;
+        }
+        
+        @media (max-width: 1200px) {
+            .upload-section {
+                padding: 30px 20px;
+            }
+            
+            .file-upload {
+                padding: 30px;
+            }
+            
+            .upload-icon {
+                font-size: 4rem;
+            }
+            
+            .upload-text {
+                font-size: 1.2rem;
+            }
+            
+            .upload-btn {
+                padding: 12px 30px;
+                font-size: 1.1rem;
+            }
         }
         
         @media (max-width: 768px) {
@@ -419,8 +583,13 @@
             }
             
             th, td {
-                padding: 8px 10px;
+                padding: 10px 12px;
                 font-size: 0.9rem;
+            }
+            
+            .status-bar {
+                flex-direction: column;
+                gap: 10px;
             }
         }
     </style>
@@ -429,49 +598,62 @@
     <div class="container">
         <header>
             <div class="logo">
-                <i class="fas fa-file-csv"></i>
+                <i class="fas fa-satellite-dish"></i>
                 <div>
-                    <h1>CDR File Processor</h1>
-                    <div class="subtitle">Advanced Call Detail Records Management</div>
+                    <h1>Advanced CDR File Processor</h1>
+                    <div class="subtitle">Process Multiple CDR Files & Folders</div>
                 </div>
             </div>
         </header>
         
         <section class="upload-section">
             <div class="file-upload">
-                <i class="fas fa-cloud-upload-alt upload-icon"></i>
-                <div class="upload-text">Upload your CDR or Text file</div>
-                <input type="file" id="fileInput" class="file-input" accept=".txt,.csv">
-                <label for="fileInput" class="upload-btn">
-                    <i class="fas fa-file-upload"></i> Choose File
-                </label>
-                <div class="file-name" id="fileName">No file selected</div>
+                <i class="fas fa-folder-open upload-icon"></i>
+                <div class="upload-text">Upload CDR files or entire folders</div>
+                
+                <div style="display: flex; gap: 15px; margin-top: 10px;">
+                    <input type="file" id="fileInput" class="file-input" accept=".txt,.csv" multiple>
+                    <label for="fileInput" class="upload-btn">
+                        <i class="fas fa-file-upload"></i> Select Files
+                    </label>
+                    
+                    <input type="file" id="folderInput" class="file-input" webkitdirectory directory multiple>
+                    <label for="folderInput" class="upload-btn">
+                        <i class="fas fa-folder"></i> Select Folder
+                    </label>
+                </div>
+                
+                <div class="file-name" id="fileName">
+                    <div id="fileCount">No files selected</div>
+                    <div class="file-list" id="fileList"></div>
+                </div>
                 
                 <div class="file-type">
-                    <div class="file-type-btn active" id="cdrBtn">CDR (with headers)</div>
-                    <div class="file-type-btn" id="textBtn">Text (no headers)</div>
+                    <div class="file-type-btn active" id="cdrBtn">CDR File Format</div>
+                    <div class="file-type-btn" id="textBtn">Raw Text Format</div>
                 </div>
             </div>
         </section>
         
         <section class="info-card">
-            <h3>About This CDR Processor</h3>
-            <p>This tool is designed for telecom professionals to analyze call detail records with:</p>
-            <ul style="margin: 15px 0; padding-left: 20px;">
-                <li>Advanced pagination controls with row selection</li>
-                <li>Navigation buttons for efficient data browsing</li>
-                <li>Automatic header application for raw text files</li>
-                <li>CSV export functionality</li>
-                <li>Responsive design for all devices</li>
+            <h3>Multi-File CDR Processing</h3>
+            <p>This enhanced processor handles multiple CDR files simultaneously with:</p>
+            <ul>
+                <li><i class="fas fa-check-circle" style="color: #27ae60;"></i> <strong>Folder upload support</strong> - process entire directories of CDR files</li>
+                <li><i class="fas fa-check-circle" style="color: #27ae60;"></i> <strong>Multi-file selection</strong> - select and process multiple files at once</li>
+                <li><i class="fas fa-check-circle" style="color: #27ae60;"></i> <strong>Combined data view</strong> - view all records from multiple files in one table</li>
+                <li><i class="fas fa-check-circle" style="color: #27ae60;"></i> <strong>File list display</strong> - see all processed files with status indicators</li>
+                <li><i class="fas fa-check-circle" style="color: #27ae60;"></i> <strong>206-column support</strong> - handles the full CDR specification</li>
             </ul>
-            <p>Upload your CDR files to analyze call patterns, durations, and network performance metrics.</p>
+            
+            <p>Upload multiple CDR files to analyze call patterns across different time periods or network segments.</p>
         </section>
         
         <section class="table-section" id="tableSection">
             <div class="status-bar" id="statusBar">
-                <i class="fas fa-info-circle"></i> 
-                <span id="statusText">CDR data loaded successfully</span>
-                <span class="column-count" id="columnCount">0 columns</span>
+                <i class="fas fa-database"></i> 
+                <span id="statusText">Ready to process CDR files</span>
+                <span class="column-count" id="columnCount">0 files, 0 records</span>
             </div>
             
             <div class="controls">
@@ -487,17 +669,17 @@
                     </div>
                     
                     <div class="page-nav">
-                        <button class="btn btn-primary" id="firstPage">
+                        <button class="btn btn-primary" id="firstPage" title="First Page">
                             <i class="fas fa-angle-double-left"></i>
                         </button>
-                        <button class="btn btn-primary" id="prevPage">
+                        <button class="btn btn-primary" id="prevPage" title="Previous Page">
                             <i class="fas fa-angle-left"></i>
                         </button>
-                        <span id="pageInfo">Page 1 of 1</span>
-                        <button class="btn btn-primary" id="nextPage">
+                        <span id="pageInfo" style="font-weight:600; min-width:120px; text-align:center;">Page 1 of 1</span>
+                        <button class="btn btn-primary" id="nextPage" title="Next Page">
                             <i class="fas fa-angle-right"></i>
                         </button>
-                        <button class="btn btn-primary" id="lastPage">
+                        <button class="btn btn-primary" id="lastPage" title="Last Page">
                             <i class="fas fa-angle-double-right"></i>
                         </button>
                     </div>
@@ -505,10 +687,10 @@
                 
                 <div class="action-bar">
                     <button class="btn btn-success" id="downloadBtn">
-                        <i class="fas fa-download"></i> Download CSV
+                        <i class="fas fa-file-csv"></i> Export to CSV
                     </button>
                     <button class="btn btn-danger" id="resetBtn">
-                        <i class="fas fa-redo"></i> Reset
+                        <i class="fas fa-sync-alt"></i> Reset Processor
                     </button>
                 </div>
             </div>
@@ -516,11 +698,11 @@
             <div class="table-container">
                 <table id="cdrTable">
                     <thead>
-                        <tr>
+                        <tr id="tableHeader">
                             <!-- Table headers will be generated here -->
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="tableBody">
                         <!-- Table rows will be generated here -->
                     </tbody>
                 </table>
@@ -532,12 +714,12 @@
         </section>
         
         <footer>
-            <p>CDR File Processor &copy; 2023 | Telecom Analytics Solution</p>
+            <p>Advanced CDR File Processor &copy; 2023 | Telecom Data Analytics Solution</p>
         </footer>
     </div>
 
     <script>
-        // Standard CDR headers
+        // CDR headers from your original file
         const cdrHeaders = [
             "Accounting Status", "NAS IP Address", "NAS Port", "Accounting Session ID", 
             "Ingress Session ID", "Egress Session ID", "Session Protocol Type", 
@@ -612,29 +794,29 @@
             "IMEI","Node Functionality","History Info","P-Visited Network ID","IMSI","Access-Network-Information","CDR Sequence Number","Stir-Signed-Request","Stir-Signed-Request-Exception-Id",
             "Stir-Verified-Request","Stir-Verified-Request-Exception-Id","Stir-VS-Verstat","Stir-VS-Reason","Stir-TN-Used-For-AS-VS-Request","Stir-Div-Signed-Request","Stir-Div-Verified-Request",
             "History Info2","Stir-VS-Invite-State"
-
         ];
         
-        // Sample CDR data
-        const sampleCdrData = [
-            "2,220.158.136.74,5060,4b27d8d5-276aad8c2929-7f662328de50-4efac80a-0500047,4b27d8d5-276aad8c2929-7f662328de50-4efac80a-0500047,4b27d8d5-276aad8c2929-7f662328de50-4efac80a-0500047,SIP,,,<sip:00911246047119@220.158.136.74:5060>;tag=6911581b-276aad8c6c85-7f66267a9aa0-4efac80a-0500047,<sip:09839802385@220.158.136.74:5060>,1,41,10:59:08.050 IST Dec 07 2024,10:59:35.273 IST Dec 07 2024,11:00:16.938 IST Dec 07 2024,1,s1p1,366,s0p0,0,TTSL_Gurgaon,Access_Noida,localhost:632299,G729,Access_Noida,10.200.250.78,40870,220.158.136.74,13424,TTSL_Gurgaon,10.55.89.206,34372,10.60.66.45,17908,0,0,0,0,0,1,2,45,248640,3360,8154,408,localhost:632300,G729,TTSL_Gurgaon,10.60.66.45,17908,10.55.89.206,34372,Access_Noida,220.158.136.74,13424,10.200.250.78,40870,1,19,0,27,0,0,0,1,265200,3400,8162,408,,,,0.0.0.0,0,0.0.0.0,0,,0.0.0.0,0,0.0.0.0,0,0,0,0,0,0,0,0,0,0,0,,,,0.0.0.0,0,0.0.0.0,0,,0.0.0.0,0,0.0.0.0,0,0,0,0,0,0,0,0,0,0,0,,,SCZ9.3.0 Patch 1 (Build 74),GMT-05:30,794,sip:09839802385@220.158.136.74:5060,,,,,220.158.136.74:5060,10.200.250.78:5060,10.55.89.206:5060,10.60.65.31:5060,,3,2,16,0,sip:09839802385@10.60.65.31:5060,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,11:00:16.938 IST Dec 07 2024,11:00:16.938 IST Dec 07 2024,00:00:00.000 UTC Jan 01 1970,00:00:00.000 UTC Jan 01 1970,audio,audio,,,56304284,594661,116772239,1140188,0,0,0,0,0,0,0,0,0,0,0,0,0.0.0.0,0.0.0.0,,,1,,,,911246047119,,2267007"
-        ];
-        
+        // Global variables
         let currentData = [];
         let rowsPerPage = 30;
         let currentPage = 1;
         let totalPages = 1;
-        let fileType = 'cdr'; // 'cdr' or 'text'
+        let fileType = 'cdr';
+        let files = [];
         
+        // Initialize on DOM load
         document.addEventListener('DOMContentLoaded', () => {
             const fileInput = document.getElementById('fileInput');
-            const fileName = document.getElementById('fileName');
+            const folderInput = document.getElementById('folderInput');
+            const fileCount = document.getElementById('fileCount');
+            const fileList = document.getElementById('fileList');
             const tableSection = document.getElementById('tableSection');
             const downloadBtn = document.getElementById('downloadBtn');
             const resetBtn = document.getElementById('resetBtn');
             const cdrBtn = document.getElementById('cdrBtn');
             const textBtn = document.getElementById('textBtn');
-            const cdrTable = document.getElementById('cdrTable');
+            const tableHeader = document.getElementById('tableHeader');
+            const tableBody = document.getElementById('tableBody');
             const statusBar = document.getElementById('statusBar');
             const statusText = document.getElementById('statusText');
             const columnCount = document.getElementById('columnCount');
@@ -644,15 +826,14 @@
             const nextPageBtn = document.getElementById('nextPage');
             const lastPageBtn = document.getElementById('lastPage');
             const pageInfo = document.getElementById('pageInfo');
+            const pagination = document.getElementById('pagination');
             
-            // Initialize with sample data
-            processCdrData(sampleCdrData.join('\n'));
-            displayTable();
+            // Initialize status
             updateStatusBar();
-            updatePageInfo();
             
             // Event listeners
             fileInput.addEventListener('change', handleFileUpload);
+            folderInput.addEventListener('change', handleFolderUpload);
             cdrBtn.addEventListener('click', () => setFileType('cdr'));
             textBtn.addEventListener('click', () => setFileType('text'));
             downloadBtn.addEventListener('click', downloadCSV);
@@ -663,89 +844,131 @@
             nextPageBtn.addEventListener('click', goToNextPage);
             lastPageBtn.addEventListener('click', goToLastPage);
             
+            // Set file type
             function setFileType(type) {
                 fileType = type;
                 cdrBtn.classList.toggle('active', type === 'cdr');
                 textBtn.classList.toggle('active', type === 'text');
-            }
-            
-            function handleFileUpload(e) {
-                if (e.target.files.length > 0) {
-                    const file = e.target.files[0];
-                    fileName.textContent = file.name;
-                    
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const content = e.target.result;
-                        processFileContent(content);
-                    };
-                    
-                    reader.readAsText(file);
+                
+                if (files.length > 0) {
+                    processFiles();
                 }
             }
             
-            function processFileContent(content) {
+            // Handle file upload
+            function handleFileUpload(e) {
+                files = Array.from(e.target.files);
+                updateFileList();
+                processFiles();
+            }
+            
+            // Handle folder upload
+            function handleFolderUpload(e) {
+                files = Array.from(e.target.files);
+                updateFileList();
+                processFiles();
+            }
+            
+            // Update file list display
+            function updateFileList() {
+                if (files.length === 0) {
+                    fileCount.textContent = "No files selected";
+                    fileList.innerHTML = "";
+                    return;
+                }
+                
+                fileCount.textContent = `${files.length} file${files.length > 1 ? 's' : ''} selected`;
+                fileList.innerHTML = "";
+                
+                files.forEach(file => {
+                    const fileItem = document.createElement('div');
+                    fileItem.className = 'file-list-item';
+                    fileItem.innerHTML = `<i class="fas fa-file-alt"></i> ${file.name}`;
+                    fileList.appendChild(fileItem);
+                });
+            }
+            
+            // Process all files
+            async function processFiles() {
+                if (files.length === 0) {
+                    statusText.textContent = "No files to process";
+                    return;
+                }
+                
+                statusText.textContent = `Processing ${files.length} file${files.length > 1 ? 's' : ''}...`;
+                statusBar.style.backgroundColor = '#f1c40f';
+                statusBar.style.display = 'flex';
+                
                 try {
-                    if (fileType === 'cdr') {
-                        processCdrData(content);
-                        statusText.textContent = "CDR file processed successfully";
-                    } else {
-                        processTextData(content);
-                        statusText.textContent = "Text file processed with CDR headers";
+                    // Reset current data
+                    currentData = [cdrHeaders];
+                    let totalRecords = 0;
+                    
+                    for (const file of files) {
+                        const content = await readFileAsync(file);
+                        const rows = content.split('\n').filter(line => line.trim() !== '');
+                        
+                        for (let i = 0; i < rows.length; i++) {
+                            const row = rows[i].split(',').map(cell => cell.trim());
+                            
+                            // For CDR files, skip header row after the first file
+                            if (fileType === 'cdr' && i === 0 && currentData.length > 1) {
+                                continue;
+                            }
+                            
+                            if (row.length > 0) {
+                                currentData.push(row);
+                                totalRecords++;
+                            }
+                        }
                     }
                     
-                    displayTable();
+                    // Update status
+                    statusText.textContent = `Processed ${files.length} file${files.length > 1 ? 's' : ''} successfully`;
+                    statusBar.style.backgroundColor = '#27ae60';
+                    tableSection.style.display = 'block';
+                    
+                    // Render table
+                    renderTable();
                     updateStatusBar();
                     updatePageInfo();
-                    tableSection.style.display = 'block';
-                    statusBar.style.display = 'flex';
-                    statusBar.style.backgroundColor = '#f1c40f';
-                    statusBar.style.color = '#2c3e50';
                     
                     // Scroll to table section
                     setTimeout(() => {
                         tableSection.scrollIntoView({ behavior: 'smooth' });
                     }, 300);
+                    
                 } catch (error) {
-                    console.error('Error processing file:', error);
-                    statusText.textContent = "Error processing file: " + error.message;
+                    console.error('Error processing files:', error);
+                    statusText.textContent = "Error processing files: " + error.message;
                     statusBar.style.backgroundColor = '#e74c3c';
-                    statusBar.style.color = 'white';
-                    statusBar.style.display = 'flex';
                 }
             }
             
-            function processCdrData(content) {
-                const rows = content.split('\n').filter(line => line.trim() !== '');
-                currentData = rows.map(row => row.split(',').map(cell => cell.trim()));
+            // Helper function to read file as text
+            function readFileAsync(file) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(reader.result);
+                    reader.onerror = reject;
+                    reader.readAsText(file);
+                });
             }
             
-            function processTextData(content) {
-                const rows = content.split('\n').filter(line => line.trim() !== '');
-                const dataRows = rows.map(row => row.split(',').map(cell => cell.trim()));
-                
-                // Apply CDR headers to the text data
-                currentData = [cdrHeaders, ...dataRows];
-            }
-            
-            function displayTable() {
-                const thead = cdrTable.querySelector('thead tr');
-                const tbody = cdrTable.querySelector('tbody');
-                const pagination = document.getElementById('pagination');
-                
+            // Render table with pagination
+            function renderTable() {
                 // Clear existing content
-                thead.innerHTML = '';
-                tbody.innerHTML = '';
+                tableHeader.innerHTML = '';
+                tableBody.innerHTML = '';
                 pagination.innerHTML = '';
                 
                 // Create headers
-                if (currentData.length > 0) {
-                    // Original headers
+                if (currentData.length > 0 && currentData[0].length > 0) {
                     currentData[0].forEach(header => {
                         const th = document.createElement('th');
                         th.textContent = header;
                         th.title = header;
-                        thead.appendChild(th);
+                        tableHeader.appendChild(th);
                     });
                     
                     // Calculate total pages
@@ -762,7 +985,7 @@
                             button.textContent = i;
                             button.addEventListener('click', () => {
                                 currentPage = i;
-                                displayTable();
+                                renderTable();
                                 updatePageInfo();
                             });
                             pagination.appendChild(button);
@@ -776,7 +999,7 @@
                     for (let i = startIndex; i < endIndex; i++) {
                         const row = document.createElement('tr');
                         
-                        // Original data cells
+                        // Create data cells
                         currentData[i].forEach(cell => {
                             const td = document.createElement('td');
                             td.textContent = cell;
@@ -784,31 +1007,33 @@
                             row.appendChild(td);
                         });
                         
-                        tbody.appendChild(row);
+                        tableBody.appendChild(row);
                     }
                 }
                 
                 updatePageButtons();
             }
             
+            // Change rows per page
             function changeRowsPerPage() {
                 rowsPerPage = parseInt(rowsPerPageSelect.value);
                 currentPage = 1;
-                displayTable();
+                renderTable();
                 updateStatusBar();
                 updatePageInfo();
             }
             
+            // Navigation functions
             function goToFirstPage() {
                 currentPage = 1;
-                displayTable();
+                renderTable();
                 updatePageInfo();
             }
             
             function goToPrevPage() {
                 if (currentPage > 1) {
                     currentPage--;
-                    displayTable();
+                    renderTable();
                     updatePageInfo();
                 }
             }
@@ -816,17 +1041,18 @@
             function goToNextPage() {
                 if (currentPage < totalPages) {
                     currentPage++;
-                    displayTable();
+                    renderTable();
                     updatePageInfo();
                 }
             }
             
             function goToLastPage() {
                 currentPage = totalPages;
-                displayTable();
+                renderTable();
                 updatePageInfo();
             }
             
+            // Update page buttons state
             function updatePageButtons() {
                 firstPageBtn.disabled = currentPage === 1;
                 prevPageBtn.disabled = currentPage === 1;
@@ -834,21 +1060,37 @@
                 lastPageBtn.disabled = currentPage === totalPages;
             }
             
+            // Update page info display
             function updatePageInfo() {
-                pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+                const startRecord = (currentPage - 1) * rowsPerPage + 1;
+                const endRecord = Math.min(startRecord + rowsPerPage - 1, currentData.length - 1);
+                const totalRecords = currentData.length - 1;
+                pageInfo.textContent = `Page ${currentPage} of ${totalPages} | Records ${startRecord}-${endRecord} of ${totalRecords}`;
                 updatePageButtons();
             }
             
+            // Update status bar
             function updateStatusBar() {
-                if (currentData.length > 0) {
-                    const colCount = currentData[0].length;
-                    const rowCount = currentData.length - 1;
-                    columnCount.textContent = `${rowCount} records, ${colCount} columns`;
+                if (currentData.length > 1) {
+                    const totalRecords = currentData.length - 1;
+                    columnCount.textContent = `${files.length} files, ${totalRecords} records`;
                     statusBar.style.display = 'flex';
+                } else {
+                    columnCount.textContent = "No data loaded";
                 }
             }
             
+            // Download CSV
             function downloadCSV() {
+                if (currentData.length < 2) {
+                    statusText.textContent = "No data to export";
+                    statusBar.style.backgroundColor = '#e74c3c';
+                    setTimeout(() => {
+                        statusBar.style.backgroundColor = '';
+                    }, 3000);
+                    return;
+                }
+                
                 // Create CSV content
                 let csvContent = '';
                 
@@ -871,22 +1113,33 @@
                 const url = URL.createObjectURL(blob);
                 const link = document.createElement('a');
                 link.setAttribute('href', url);
-                link.setAttribute('download', 'cdr_data_export.csv');
+                link.setAttribute('download', 'cdr_export.csv');
                 link.style.visibility = 'hidden';
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
+                
+                // Show download confirmation
+                statusText.textContent = "CSV export completed successfully";
+                statusBar.style.backgroundColor = '#27ae60';
+                setTimeout(() => {
+                    statusBar.style.backgroundColor = '';
+                }, 3000);
             }
             
+            // Reset application
             function resetApp() {
-                currentData = [];
+                currentData = [cdrHeaders];
+                files = [];
                 currentPage = 1;
                 rowsPerPage = 30;
                 rowsPerPageSelect.value = '30';
                 fileInput.value = '';
-                fileName.textContent = 'No file selected';
+                folderInput.value = '';
+                updateFileList();
                 tableSection.style.display = 'none';
                 statusBar.style.display = 'none';
+                renderTable();
             }
         });
     </script>
